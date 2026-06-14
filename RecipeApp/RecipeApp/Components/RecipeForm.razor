@@ -4,75 +4,119 @@
 <EditForm Model="Recipe"
           OnValidSubmit="Save"
           OnInvalidSubmit="HandleInvalidSubmit">
-    <DataAnnotationsValidator/>
+    <DataAnnotationsValidator />
 
     <main class="recipe-view">
         <div class="recipe-card">
-            <input
-                class="form-control recipe-title-input mb-4"
-                placeholder="Введите название рецепта"
-                @bind="Recipe.Title"/>
+            <input class="form-control recipe-title-input mb-4"
+                   placeholder="Введите название рецепта"
+                   @bind="Recipe.Title" />
 
             <div class="image-upload-wrapper mb-4">
                 <label for="imageInput" class="image-upload-label">
                     @if (!string.IsNullOrEmpty(imagePreviewUrl))
                     {
-                        <img src="@imagePreviewUrl" class="recipe-image-preview"/>
+                        <img src="@imagePreviewUrl" class="recipe-image-preview" />
                     }
                     else
                     {
                         <div class="image-placeholder">
                             <span class="upload-text">
-                                <img src="icons/add_image.png" alt="Удалить" width="40" class="me-1"/>
+                                <img src="icons/add_image.png" alt="Удалить" width="40" class="me-1" />
                             </span>
                         </div>
                     }
                 </label>
-                <InputFile id="imageInput" class="d-none" OnChange="HandleFileSelected"/>
+                <InputFile id="imageInput" class="d-none" OnChange="HandleFileSelected" />
             </div>
 
             <div class="mb-3">
                 <h3>Рецепт</h3>
-                <MarkdownEditor
-                    @bind-Value="markdownValue"/>
+                <MarkdownEditor @bind-Value="markdownValue" />
             </div>
 
             <h5>Ингредиенты</h5>
+            <!--Блок ингридиетов-->
+            <h5>Ингредиенты</h5>
 
-            <div class="table-responsive">
-                <table class="table table-bordered ingredient-table">
-                    <thead>
-                    <tr>
-                        <th style="width: 60%">Название</th>
-                        <th>Кол-во</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var ing in Recipe.Ingredients)
-                    {
-                        <tr>
-                            <td><input class="form-control" @bind="ing.Name"/></td>
-                            <td>
-                                <div class="quantity-unit">
-                                    <input class="form-control form-control-sm" type="number" @bind="ing.Amount" style="max-width: 100px;"/>
-                                    <select class="form-select form-select-sm" @bind="ing.Unit" style="max-width: 100px;">
-                                        @foreach (var unit in UnitTypeUtils.UnitTypes)
-                                        {
-                                            <option value="@unit">@UnitTypeUtils.GetUnitLabel(unit)</option>
-                                        }
-                                    </select>
-                                </div>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => RemoveIngredient(ing)">✕</button>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-
+<div class="table-responsive">
+    <table class="table table-bordered ingredient-table">
+        <thead>
+            <tr>
+                <th style="width: 30%">Название</th>
+                <th style="width: 15%">Кол-во</th>
+                <th style="width: 10%">Ед.</th>
+                <th style="width: 10%">Белки</th>
+                <th style="width: 10%">Жиры</th>
+                <th style="width: 10%">Углеводы</th>
+                <th style="width: 10%">Ккал</th>
+                <th style="width: 5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ing in Recipe.Ingredients)
+            {
+                <tr>
+                    <!-- Название -->
+                    <td style="max-width: 200px;">
+                        <input class="form-control" @bind="ing.Name" style="width: 100%;" />
+                    </td
+                    <!-- Количество -->
+                    <td style="min-width: 80px;">
+                        <input class="form-control form-control-sm" type="number" step="any" @bind="ing.Amount" style="width: 70px;" />
+                    </td
+                    <!-- Единица измерения -->
+                    <td style="min-width: 70px;">
+                        <select class="form-select form-select-sm" @bind="ing.Unit" style="width: 65px;">
+                            @foreach (var unit in UnitTypeUtils.UnitTypes)
+                            {
+                                <option value="@unit">@UnitTypeUtils.GetUnitLabel(unit)</option>
+                            }
+                        </select>
+                    </td
+                    <!-- Белки -->
+                    <td>
+                        <input class="form-control form-control-sm" type="number" step="any" @bind="ing.Protein" @oninput="() => CalculateCalories(ing)" style="width: 70px;" />
+                    </td
+                    <!-- Жиры -->
+                    <td>
+                        <input class="form-control form-control-sm" type="number" step="any" @bind="ing.Fat" @oninput="() => CalculateCalories(ing)" style="width: 70px;" />
+                    </td
+                    <!-- Углеводы -->
+                    <td>
+                        <input class="form-control form-control-sm" type="number" step="any" @bind="ing.Carbs" @oninput="() => CalculateCalories(ing)" style="width: 70px;" />
+                    </td
+                    <!-- Калории (авто) -->
+                    <td>
+                        <input class="form-control form-control-sm" type="number" step="any" @bind="ing.Calories" readonly style="width: 70px; background: #e9ecef;" />
+                    </td
+                    <!-- Удалить -->
+                    <td>
+                        <button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => RemoveIngredient(ing)" style="padding: 2px 8px;">✕</button>
+                    </td
+                </tr>
+            }
+        </tbody>
+        @if (Recipe.Ingredients.Any())
+        {
+            <tfoot>
+                <tr style="background: #f8f9fa; font-weight: bold;">
+                    <td><strong>ИТОГО:</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong>@CalculateTotalProtein().ToString("F1")</strong></td>
+                    <td><strong>@CalculateTotalFat().ToString("F1")</strong></td>
+                    <td><strong>@CalculateTotalCarbs().ToString("F1")</strong></td>
+                    <td><strong>@CalculateTotalCalories().ToString("F0")</strong></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        }
+    </table>
+</div>
+@*//
+<button type="button" class="btn btn-secondary mb-3" @onclick="AddIngredient">+ Добавить ингредиент</button>
+//*@
             <button type="button" class="btn btn-secondary mb-3" @onclick="AddIngredient">+ Добавить ингредиент</button>
 
             <div class="mt-4">
@@ -81,7 +125,7 @@
                     <button class="btn btn-secondary ms-2" @onclick="OnCancel">Отмена</button>
 
                     <div class="text-danger mt-2">
-                        <ValidationMessage For="@(() => Recipe.Title)"/>
+                        <ValidationMessage For="@(() => Recipe.Title)" />
                     </div>
                 </div>
             </div>

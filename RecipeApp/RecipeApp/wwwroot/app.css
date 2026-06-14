@@ -613,3 +613,22 @@ article {
 .text-danger {
     color: #ff0300;
 }
+
+@media print {
+  button, .add-button, .btn, [onclick] {
+    display: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    padding: 20px;
+    font-size: 12pt;
+  }
+
+  .recipe-item {
+    page-break-inside: avoid;
+  }
+}

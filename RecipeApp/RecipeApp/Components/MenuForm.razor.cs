@@ -40,6 +40,21 @@ public partial class MenuForm
   [Parameter]
   public bool IsEditMode { get; set; }
   private int SelectedGroupId { get; set; } = 1;
+  [Parameter]
+  public List<Recipe> AllRecipes { get; set; } = new();
+
+  // sum intgredient
+  private int sumProtein, sumFat, sumCarbs, sumCalories;
+
+  // Чек-боксы
+  private bool isBreakfast = false;
+  private bool isLunch = false;
+  private bool isDinner = false;
+
+  // Храним ID рецепта (int), а не весь объект
+  private List<int> breakfastItems = new() { 0 };
+  private List<int> lunchItems = new() { 0 };
+  private List<int> dinnerItems = new() { 0 };
 
   #endregion
 
@@ -86,12 +101,39 @@ public partial class MenuForm
           menu_id = null
         };
         Menu.Dishes.Add(dish);
-      }
+
+        if(SelectedGroupId == 1)
+        {
+          breakfastItems.Add(recipe.Id);
+        }
+        else
+        if (SelectedGroupId == 2)
+        {
+            lunchItems.Add(recipe.Id);
+        }
+        else
+        if (SelectedGroupId == 3)
+        {
+              dinnerItems.Add(recipe.Id);
+        }
+      } 
     }
   }
 
   private async Task Save()
   {
+    var selectedBreakfast = Menu.Dishes
+    .Where(r => breakfastItems.Contains(r.Id))
+    .ToList();
+
+    var selectedLunch = AllRecipes
+        .Where(r => lunchItems.Contains(r.Id))
+        .ToList();
+
+    var selectedDinner = AllRecipes
+        .Where(r => dinnerItems.Contains(r.Id))
+        .ToList();
+
     if (this.Menu.Dishes != null && this.Menu.Dishes.Any())
     {
       var dishNames = this.Menu.Dishes.Select(d => d.Name).ToList();
@@ -102,7 +144,16 @@ public partial class MenuForm
       this.Menu.Content = "[]";
     }
 
-    await this.OnSave.InvokeAsync();
+   await this.OnSave.InvokeAsync();
+  }
+
+  private void Print()
+  {
+    var breakfastIds = string.Join(",", breakfastItems.Where(x => x > 0));
+    var lunchIds = string.Join(",", lunchItems.Where(x => x > 0));
+    var dinnerIds = string.Join(",", dinnerItems.Where(x => x > 0));
+
+    NavigationManager.NavigateTo($"/print-preview?BreakfastIds={breakfastIds}&LunchIds={lunchIds}&DinnerIds={dinnerIds}");
   }
 
   private async Task HandleFileSelected(InputFileChangeEventArgs e)

@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Linq;
 using RecipeApp.Model;
 
 namespace RecipeApp.Components;
@@ -67,6 +68,18 @@ public partial class RecipeForm
   #endregion
 
   #region Методы
+
+  // Рассчет калорий по формуле
+  private void CalculateCalories(Ingredient ingredient)
+  {
+    ingredient.Calories = (ingredient.Protein * 4) + (ingredient.Fat * 9) + (ingredient.Carbs * 4);
+  }
+
+  // Подсчет итогов
+  private double CalculateTotalProtein() => Recipe.Ingredients.Sum(i => i.Protein);
+  private double CalculateTotalFat() => Recipe.Ingredients.Sum(i => i.Fat);
+  private double CalculateTotalCarbs() => Recipe.Ingredients.Sum(i => i.Carbs);
+  private double CalculateTotalCalories() => Recipe.Ingredients.Sum(i => i.Calories);
 
   private static void HandleInvalidSubmit()
   {

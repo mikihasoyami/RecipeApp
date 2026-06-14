@@ -145,8 +145,8 @@
 <div class="mt-4">
   <div class="mt-4">
     <button type="submit" class="btn btn-primary">Сохранить</button>
-    <button type="button" class="btn btn-secondary ms-2" @onclick="OnCancel">Отмена</button>
-
+    <button type="button" class="btn btn-secondary ms-2" @onclick="OnCancel">Вернуться к списку меню</button>
+    <button class="btn btn-secondary ms-2" @onclick="Print">🖨️ К печати</button>
     <div class="text-danger mt-2">
       <ValidationMessage For="@(() => Menu.Name)" />
     </div>

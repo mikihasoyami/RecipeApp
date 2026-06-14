@@ -13,7 +13,7 @@ public partial class MenuCreate
   private Task Save()
   {
     this.MenuService.AddMenu(this._menu);
-    this.NavigationManager.NavigateTo("/");
+    //this.NavigationManager.NavigateTo("/");
 
     return Task.CompletedTask;
   }
