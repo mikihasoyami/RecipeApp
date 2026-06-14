@@ -33,11 +33,9 @@
         <InputFile id="imageInput" class="d-none" OnChange="HandleFileSelected" />
       </div>
 
-      @*Блок для выбора утра/дня/вечера*@
       <h3>Выберите время</h3>
       <div class="checkbox-container">
         <label class="form-control">
-          @*проверяем состояние checked *@
           <input type="checkbox" checked="@IsMorning" @onchange="ToggleMorning" /> Утро
         </label>
         <label class="form-control">

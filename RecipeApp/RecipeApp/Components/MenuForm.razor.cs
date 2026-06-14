@@ -29,22 +29,16 @@ public partial class MenuForm
   #region Поля и свойства
 
   private string? imagePreviewUrl;
-
   private IBrowserFile? selectedFile;
-
   [Parameter]
   public Menu Menu { get; set; } = new ();
   private Menu _menu => Menu;
-
   [Parameter]
   public EventCallback OnSave { get; set; }
-
   [Parameter]
   public EventCallback OnCancel { get; set; }
-
   [Parameter]
   public bool IsEditMode { get; set; }
-
   private int SelectedGroupId { get; set; } = 1;
 
   #endregion
@@ -72,7 +66,6 @@ public partial class MenuForm
   private void RemoveDish(Dish dish)
   {
     this.Menu.Dishes.Remove(dish);
-    this.Db.Dish.Remove(dish);
     this.Db.SaveChanges();
   }
 
