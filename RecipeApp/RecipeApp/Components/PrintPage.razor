@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using Microsoft.EntityFrameworkCore
 @inject RecipesDbContext DbContext
+@inject MenuDbContext _context
 @inject MenuService MenuService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
@@ -261,10 +262,13 @@
 
   private void GoBack()
   {
-    Menu menu = new Menu();
-    int MenuId = menu.Id;
+    int MenuId = _context.Menu
+                         .OrderByDescending(m => m.Id)
+                         .Select(m => m.Id)
+                         .FirstOrDefault();
+    this.NavigationManager.NavigateTo($"/menu/{MenuId}");
     //NavigationManager.NavigateTo("/menu/create");
-    NavigationManager.NavigateTo($"/menu/Id:{MenuId}");
+    //NavigationManager.NavigateTo($"/menu/Id:{}");
     }
 
     private async Task PrintToPdf()
